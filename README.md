@@ -4,9 +4,9 @@ Projeto criado com a intenção de testar a biblioteca de gerenciamento de estad
 
 ## Scripts relevantes
 
-`npm start`
+### `npm start`
 Inicia o projeto localmente e abre a página inicial no navegador
 
-`npm run build`
+### `npm run build`
 Cria um build de produção
 
