@@ -1,30 +1,21 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
+import { useSnapshot } from 'valtio';
+
 import './App.css'
-import { Coberturas } from './components/Coberturas'
-import { toCoberturasSelecionadasArray } from './helpers/to-coberturas-selecionadas-array';
-import { TCobertura } from './types/cobertura';
+import { Toppings } from './components/Toppings'
+import { setNewSelected } from './store/controller';
+import { toppingsState } from './store/state';
 
 function App() {
-  const [coberturasSelecionadas, setCoberturasSelecionadas] = useState<Record<number, boolean>>({});
-  const [coberturasVisiveis, setCoberturasVisiveis] = useState(false);
-  const coberturasSelecionadasArray = useMemo(
-    () => toCoberturasSelecionadasArray(coberturasSelecionadas),
-    [coberturasSelecionadas]
-  );
-  const total = useMemo(
-    () => coberturasSelecionadasArray.reduce((total, cob) => total + cob.price, 0),
-    [coberturasSelecionadasArray]
-  );
-
-  const toggleCobertura = (cobertura: TCobertura, selecionado: boolean) => {
-    setCoberturasSelecionadas(coberturas => ({
-      ...coberturas,
-      [cobertura.id]: selecionado
-    }));
+  const snap = useSnapshot(toppingsState);
+  
+  const [modalVisible, setModalVisible] = useState(false);
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
+  const onAccept = (selected: Record<string, boolean>) => {
+    setNewSelected(selected);
+    hideModal();
   }
-
-  const showCoberturas = () => setCoberturasVisiveis(true);
-  const hideCoberturas = () => setCoberturasVisiveis(false);
 
   return (
     <div>
@@ -35,33 +26,32 @@ function App() {
       </p>
 
       <ul>
-        {coberturasSelecionadasArray.map(cob => (
-          <li key={cob.id}>
-            {cob.text} (+R$ {cob.price.toFixed(2)})
+        {snap.selectedArray.map(top => (
+          <li key={top.id}>
+            {top.text} (+R$ {top.price.toFixed(2)})
           </li>
         ))}
 
-        {!coberturasSelecionadasArray.length && (
+        {!snap.selectedArray.length && (
           <li>
             Sem cobertura
           </li>
         )}
       </ul>
 
-      <button onClick={showCoberturas}>Adicionar cobertura</button>
+      <button onClick={showModal}>Adicionar cobertura</button>
 
       <p>
-        Total a pagar pelas coberturas: R$ {total.toFixed(2)}
+        Total a pagar pelas coberturas: R$ {snap.total.toFixed(2)}
       </p>
 
-      {coberturasVisiveis && (
-        <Coberturas
-          coberturasSelecionadas={coberturasSelecionadas}
-          onConcluir={hideCoberturas}
-          toggleCobertura={toggleCobertura}
-          total={total}
-        />
-      )}
+      <Toppings
+        onAccept={onAccept}
+        onCancel={hideModal}
+        onBackgroundClick={hideModal}
+        initialSelected={snap.selected}
+        modalVisible={modalVisible}
+      />
     </div>
   )
 }

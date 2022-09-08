@@ -1,0 +1,17 @@
+.toppings {
+  width: 250px;
+}
+
+.toppings h2 {
+  margin-top: 0px;
+}
+
+.toppings ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.toppings .toppings-options {
+  display: flex;
+  justify-content: space-between;
+}

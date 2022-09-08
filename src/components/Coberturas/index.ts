@@ -1,1 +1,0 @@
-export { Coberturas } from './Coberturas';
